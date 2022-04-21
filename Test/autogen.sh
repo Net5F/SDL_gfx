@@ -1,18 +1,12 @@
 #!/bin/sh
 #
-
-# Prep
-make distclean
-aclocal --force
-libtoolize --force --copy
-autoreconf -fvi
-rm -rf autom4te.cache
-
-# Setup
-aclocal
-autoheader
-automake --foreign
-autoconf
-
-#./configure $*
-echo "Now you are ready to run ./configure"
+# Regenerate configuration files
+cp acinclude.m4 aclocal.m4
+found=false
+for autoconf in autoconf autoconf259 autoconf-2.59
+do if which $autoconf >/dev/null 2>&1; then $autoconf && found=true; break; fi
+done
+if test x$found = xfalse; then
+    echo "Couldn't find autoconf, aborting"
+    exit 1
+fi

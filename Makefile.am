@@ -1,34 +1,44 @@
-# Makefile.am for the SDL_gfx library/DLL
+# Makefile.am for the SDL2_gfx library
 
-ACLOCAL_AMFLAGS = -I m4
+lib_LTLIBRARIES = libSDL2_gfx.la
 
-lib_LTLIBRARIES = libSDL_gfx.la
+libSDL2_gfxincludedir =		\
+	$(includedir)/SDL2
+libSDL2_gfxinclude_HEADERS =	\
+	SDL2_framerate.h	\
+	SDL2_gfxPrimitives.h	\
+	SDL2_imageFilter.h	\
+	SDL2_rotozoom.h
 
-libSDL_gfxincludedir = $(includedir)/SDL
-libSDL_gfxinclude_HEADERS =	\
-	SDL_gfxPrimitives.h	\
-	SDL_gfxPrimitives_font.h	\
-	SDL_rotozoom.h	\
-	SDL_framerate.h \
-	SDL_imageFilter.h \
-	SDL_gfxBlitFunc.h
+libSDL2_gfx_la_SOURCES =	\
+	SDL2_framerate.c	\
+	SDL2_gfxPrimitives.c	\
+	SDL2_imageFilter.c	\
+	SDL2_rotozoom.c
 
-libSDL_gfx_la_SOURCES =		\
-	SDL_gfxPrimitives.c	\
-	SDL_rotozoom.c	\
-	SDL_framerate.c \
-	SDL_imageFilter.c \
-	SDL_gfxBlitFunc.c
+EXTRA_DIST =			\
+	autogen.sh
 
-DEFS = @DEFS@ -DBUILD_DLL
-libSDL_gfx_la_LDFLAGS = 	\
-	-no-undefined -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libSDL2_gfx_la_LDFLAGS = 	\
+	-no-undefined		\
+	-release $(LT_RELEASE)	\
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+%.o : %.rc
+	$(WINDRES) $< $@
+
+# Rule to build tar-gzipped distribution package
+$(PACKAGE)-$(VERSION).tar.gz: distcheck
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = SDL_gfx.pc
+pkgconfig_DATA = SDL2_gfx.pc
 
-DISTCLEANFILES = *~ *~c *~h *.cross.cache inc 
-
-distclean-local:
-	-rm -rf autom4te.cache
-	
+# Additional cleanup rules
+DISTCLEANFILES =		\
+	*~			\
+	SDL2_gfx.sdf		\
+	SDL2_gfx.suo		\
+	SDL2_gfx.vcxproj.user	\
+	autom4te.cache/*	\
+	Win32/Debug/*		\
+	Win32/Release/*
